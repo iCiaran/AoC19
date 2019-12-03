@@ -62,11 +62,12 @@ func splitString(input string) []string {
 	return values
 }
 
-func addFirstPath(instructions []instruction) map[coord]bool {
-	set := make(map[coord]bool)
-	x, y := 0, 0
+func addFirstPath(instructions []instruction) map[coord]int {
+	set := make(map[coord]int)
+	x, y, count := 0, 0, 0
 	for _, i := range instructions {
 		for n := 0; n < i.distance; n++ {
+			count++
 			switch i.direction {
 			case 'U':
 				y += 1
@@ -78,17 +79,21 @@ func addFirstPath(instructions []instruction) map[coord]bool {
 				x -= 1
 			}
 			c := coord{x, y}
-			set[c] = true
+			if set[c] == 0 {
+				set[c] = count
+			}
 		}
 	}
 	return set
 }
 
-func addSecondPath(instructions []instruction, firstPath map[coord]bool) []coord {
+func addSecondPath(instructions []instruction, firstPath map[coord]int) ([]coord, []int) {
 	var collisions []coord
-	x, y := 0, 0
+	var timedCollisions []int
+	x, y, count := 0, 0, 0
 	for _, i := range instructions {
 		for n := 0; n < i.distance; n++ {
+			count++
 			switch i.direction {
 			case 'U':
 				y += 1
@@ -100,12 +105,13 @@ func addSecondPath(instructions []instruction, firstPath map[coord]bool) []coord
 				x -= 1
 			}
 			c := coord{x, y}
-			if firstPath[c] {
+			if firstPath[c] != 0 {
 				collisions = append(collisions, c)
+				timedCollisions = append(timedCollisions, firstPath[c]+count)
 			}
 		}
 	}
-	return collisions
+	return collisions, timedCollisions
 }
 
 func manhattanDistance(a coord, b coord) int {
@@ -124,6 +130,16 @@ func getShortestManhattan(collisions []coord) int {
 	return min
 }
 
+func getShortestCollision(collisions []int) int {
+	min := math.MaxInt32
+	for _, c := range collisions {
+		if c < min {
+			min = c
+		}
+	}
+	return min
+}
+
 func abs(x int) int {
 	if x < 0 {
 		return -x
@@ -137,13 +153,20 @@ func partA(input string) string {
 	pathB := getInstructions(lines[1])
 
 	pathACoords := addFirstPath(pathA)
-	collisions := addSecondPath(pathB, pathACoords)
+	collisions, _ := addSecondPath(pathB, pathACoords)
 	shortestManhattan := getShortestManhattan(collisions)
 	return strconv.Itoa(shortestManhattan)
 }
 
 func partB(input string) string {
-	return "B"
+	lines := getLines(input)
+	pathA := getInstructions(lines[0])
+	pathB := getInstructions(lines[1])
+
+	pathACoords := addFirstPath(pathA)
+	_, collisions := addSecondPath(pathB, pathACoords)
+	shortestCollision := getShortestCollision(collisions)
+	return strconv.Itoa(shortestCollision)
 }
 
 func main() {

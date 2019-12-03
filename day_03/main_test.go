@@ -47,6 +47,22 @@ func TestPartB(t *testing.T) {
 		input string
 		want  string
 	}{
+		{
+			input: "a_0.txt",
+			want:  "30",
+		},
+		{
+			input: "a_1.txt",
+			want:  "610",
+		},
+		{
+			input: "a_2.txt",
+			want:  "410",
+		},
+		{
+			input: "real.txt",
+			want: "14358",
+		},
 	}
 
 	for i, test := range tests {
