@@ -11,23 +11,23 @@ func TestPartA(t *testing.T) {
 
 	tests := []struct {
 		input string
-		want  string
+		want  int
 	}{
 		{
 			input: "a_0.txt",
-			want:  "6",
+			want:  6,
 		},
 		{
 			input: "a_1.txt",
-			want:  "159",
+			want:  159,
 		},
 		{
 			input: "a_2.txt",
-			want:  "135",
+			want:  135,
 		},
 		{
 			input: "real.txt",
-			want:  "1519",
+			want:  1519,
 		},
 	}
 
@@ -45,23 +45,23 @@ func TestPartB(t *testing.T) {
 
 	tests := []struct {
 		input string
-		want  string
+		want  int
 	}{
 		{
 			input: "a_0.txt",
-			want:  "30",
+			want:  30,
 		},
 		{
 			input: "a_1.txt",
-			want:  "610",
+			want:  610,
 		},
 		{
 			input: "a_2.txt",
-			want:  "410",
+			want:  410,
 		},
 		{
 			input: "real.txt",
-			want:  "14358",
+			want:  14358,
 		},
 	}
 

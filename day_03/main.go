@@ -147,7 +147,7 @@ func abs(x int) int {
 	return x
 }
 
-func partA(input string) string {
+func partA(input string) int {
 	lines := getLines(input)
 	pathA := getInstructions(lines[0])
 	pathB := getInstructions(lines[1])
@@ -155,10 +155,10 @@ func partA(input string) string {
 	pathACoords := addFirstPath(pathA)
 	collisions, _ := addSecondPath(pathB, pathACoords)
 	shortestManhattan := getShortestManhattan(collisions)
-	return strconv.Itoa(shortestManhattan)
+	return shortestManhattan
 }
 
-func partB(input string) string {
+func partB(input string) int {
 	lines := getLines(input)
 	pathA := getInstructions(lines[0])
 	pathB := getInstructions(lines[1])
@@ -166,7 +166,7 @@ func partB(input string) string {
 	pathACoords := addFirstPath(pathA)
 	_, collisions := addSecondPath(pathB, pathACoords)
 	shortestCollision := getShortestCollision(collisions)
-	return strconv.Itoa(shortestCollision)
+	return shortestCollision
 }
 
 func bothTogether(input string) (int, int){
