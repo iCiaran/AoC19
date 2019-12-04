@@ -27,7 +27,7 @@ func TestPartA(t *testing.T) {
 		},
 		{
 			input: "real.txt",
-			want: "1519",
+			want:  "1519",
 		},
 	}
 
@@ -61,7 +61,7 @@ func TestPartB(t *testing.T) {
 		},
 		{
 			input: "real.txt",
-			want: "14358",
+			want:  "14358",
 		},
 	}
 
@@ -71,5 +71,17 @@ func TestPartB(t *testing.T) {
 
 			assert.Equal(test.want, got)
 		})
+	}
+}
+
+func BenchmarkPartA(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		partA("real.txt")
+	}
+}
+
+func BenchmarkPartB(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		partB("real.txt")
 	}
 }

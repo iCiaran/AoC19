@@ -109,3 +109,15 @@ func TestPartB(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkPartA(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		partA("real.txt")
+	}
+}
+
+func BenchmarkPartB(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		partB("real.txt")
+	}
+}
