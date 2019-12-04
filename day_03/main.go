@@ -169,8 +169,21 @@ func partB(input string) string {
 	return strconv.Itoa(shortestCollision)
 }
 
+func bothTogether(input string) (int, int){
+	lines := getLines(input)
+	pathA := getInstructions(lines[0])
+	pathB := getInstructions(lines[1])
+
+	pathACoords := addFirstPath(pathA)
+	a, b := addSecondPath(pathB, pathACoords)
+	shortestManhattan := getShortestManhattan(a)
+	shortestCollision := getShortestCollision(b)
+	return shortestManhattan, shortestCollision
+}
+
 func main() {
 	input := "real.txt"
 	fmt.Println(partA(input))
 	fmt.Println(partB(input))
+	fmt.Println(bothTogether(input))
 }

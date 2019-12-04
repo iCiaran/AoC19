@@ -85,3 +85,9 @@ func BenchmarkPartB(b *testing.B) {
 		partB("real.txt")
 	}
 }
+
+func BenchmarkTogether(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		bothTogether("real.txt")
+	}
+}
