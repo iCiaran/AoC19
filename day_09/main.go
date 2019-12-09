@@ -18,7 +18,7 @@ type computer struct {
 	pcStep       map[int]int
 	inputQueue   []int
 	outputBuffer []int
-	base int
+	base         int
 }
 
 func newComputer(input []int) computer {
@@ -60,7 +60,7 @@ func (cpu *computer) addInstruction(opcode int, operands int, f func(*computer, 
 func (cpu *computer) getOperands(address int, length int) []int {
 	operands := make([]int, length)
 	for i := 0; i < length; i++ {
-		operands[i] = cpu.memory[cpu.pc + i + 1]
+		operands[i] = cpu.memory[cpu.pc+i+1]
 	}
 	return operands
 }
@@ -79,7 +79,7 @@ func (cpu *computer) read(address int, mode int, write bool) int {
 		if write {
 			return cpu.base + address
 		} else {
-			return cpu.memory[cpu.base + address]
+			return cpu.memory[cpu.base+address]
 		}
 	default:
 		log.Fatal("Wrong mode: ", mode)
@@ -191,7 +191,7 @@ func partA(input string) string {
 		cpu.clock()
 	}
 
-	return fmt.Sprintf("%v", cpu.outputBuffer)//strconv.Itoa(cpu.outputBuffer[len(cpu.outputBuffer)-1])
+	return fmt.Sprintf("%v", cpu.outputBuffer) //strconv.Itoa(cpu.outputBuffer[len(cpu.outputBuffer)-1])
 }
 
 func partB(input string) string {
@@ -202,7 +202,7 @@ func partB(input string) string {
 		cpu.clock()
 	}
 
-	return fmt.Sprintf("%v", cpu.outputBuffer)//strconv.Itoa(cpu.outputBuffer[len(cpu.outputBuffer)-1])
+	return fmt.Sprintf("%v", cpu.outputBuffer) //strconv.Itoa(cpu.outputBuffer[len(cpu.outputBuffer)-1])
 }
 
 func main() {
