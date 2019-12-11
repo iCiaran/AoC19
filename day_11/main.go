@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -19,10 +20,16 @@ type computer struct {
 	inputQueue   []int
 	outputBuffer []int
 	base         int
+	paused       bool
+}
+
+type coord struct {
+	x int
+	y int
 }
 
 func newComputer(input []int) computer {
-	cpu := computer{0, make(map[int]int, len(input)), true, make(map[int]func(*computer, []int, []int)), make(map[int]int), make(map[int]int), make([]int, 0), make([]int, 0), 0}
+	cpu := computer{0, make(map[int]int, len(input)), true, make(map[int]func(*computer, []int, []int)), make(map[int]int), make(map[int]int), make([]int, 0), make([]int, 0), 0, false}
 	for key, val := range input {
 		cpu.memory[key] = val
 	}
@@ -105,8 +112,13 @@ func opHalt(cpu *computer, operands []int, addressMode []int) {
 }
 
 func opInput(cpu *computer, operands []int, addressMode []int) {
-	cpu.write(cpu.read(operands[0], addressMode[0], true), cpu.inputQueue[0])
-	cpu.inputQueue = cpu.inputQueue[1:]
+	if len(cpu.inputQueue) > 0 {
+		cpu.write(cpu.read(operands[0], addressMode[0], true), cpu.inputQueue[0])
+		cpu.inputQueue = cpu.inputQueue[1:]
+	} else {
+		cpu.paused = true
+		cpu.pc -= 2
+	}
 }
 
 func opOutput(cpu *computer, operands []int, addressMode []int) {
@@ -183,26 +195,84 @@ func splitString(input string) []int {
 	return values
 }
 
-func partA(input string) string {
+func getColours(input string, startColour int) map[coord]int {
 	cpu := newComputer(splitString(getLines(input)[0]))
-	cpu.inputQueue = append(cpu.inputQueue, 1)
+
+	location := coord{0, 0}
+	right := complex(0, 1)
+	left := complex(0, -1)
+	direction := complex(0, 1)
+
+	colour := make(map[coord]int, 0)
+	colour[location] = startColour
 
 	for cpu.running {
 		cpu.clock()
+		if cpu.paused {
+			cpu.inputQueue = append(cpu.inputQueue, colour[location])
+			cpu.paused = false
+		}
+		if len(cpu.outputBuffer) == 2 {
+			colour[location] = cpu.outputBuffer[0]
+			if cpu.outputBuffer[1] == 0 {
+				direction *= left
+			} else {
+				direction *= right
+			}
+			location.x -= int(real(direction))
+			location.y -= int(imag(direction))
+			cpu.outputBuffer = cpu.outputBuffer[:0]
+		}
+
+	}
+	return colour
+}
+
+func getOutputString(colour map[coord]int) string {
+	minX, minY, maxX, maxY := getBounds(colour)
+	var sb strings.Builder
+	for y := minY; y <= maxY; y++ {
+		for x := minX; x <= maxX; x++ {
+			c := colour[coord{x, y}]
+			if c == 1 {
+				sb.WriteString("#")
+			} else {
+				sb.WriteString(" ")
+			}
+		}
+		sb.WriteString("\n")
 	}
 
-	return fmt.Sprintf("%v", cpu.outputBuffer)
+	return sb.String()
+}
+
+func getBounds(colour map[coord]int) (int, int, int, int) {
+	minX, minY, maxX, maxY := math.MaxInt64, math.MaxInt64, math.MinInt64, math.MinInt64
+	for k := range colour {
+		if k.x < minX {
+			minX = k.x
+		}
+		if k.x > maxX {
+			maxX = k.x
+		}
+		if k.y < minY {
+			minY = k.y
+		}
+		if k.y > maxY {
+			maxY = k.y
+		}
+	}
+	return minX, minY, maxX, maxY
+}
+
+func partA(input string) string {
+	colour := getColours(input, 0)
+	return strconv.Itoa(len(colour))
 }
 
 func partB(input string) string {
-	cpu := newComputer(splitString(getLines(input)[0]))
-	cpu.inputQueue = append(cpu.inputQueue, 2)
-
-	for cpu.running {
-		cpu.clock()
-	}
-
-	return fmt.Sprintf("%v", cpu.outputBuffer)
+	colour := getColours(input, 1)
+	return getOutputString(colour)
 }
 
 func main() {
