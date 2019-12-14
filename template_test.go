@@ -15,7 +15,7 @@ func TestPartA(t *testing.T) {
 	}{
 		{
 			input: "real.txt",
-			want:  "",
+			want:  "A",
 		},
 	}
 
@@ -37,7 +37,7 @@ func TestPartB(t *testing.T) {
 	}{
 		{
 			input: "real.txt",
-			want:  "",
+			want:  "B",
 		},
 	}
 
