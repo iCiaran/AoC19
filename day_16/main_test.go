@@ -15,7 +15,23 @@ func TestPartA(t *testing.T) {
 	}{
 		{
 			input: "real.txt",
-			want:  "A",
+			want:  "63794407",
+		},
+		{
+			input: "a_0.txt",
+			want:  "23845678",
+		},
+		{
+			input: "a_1.txt",
+			want:  "24176176",
+		},
+		{
+			input: "a_2.txt",
+			want:  "73745418",
+		},
+		{
+			input: "a_3.txt",
+			want:  "52432133",
 		},
 	}
 
@@ -37,7 +53,19 @@ func TestPartB(t *testing.T) {
 	}{
 		{
 			input: "real.txt",
-			want:  "B",
+			want:  "77247538",
+		},
+		{
+			input: "b_0.txt",
+			want:  "84462026",
+		},
+		{
+			input: "b_1.txt",
+			want:  "78725270",
+		},
+		{
+			input: "b_2.txt",
+			want:  "53553731",
 		},
 	}
 
