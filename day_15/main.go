@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"strconv"
 	"strings"
-	"math"
 )
 
 type computer struct {
@@ -26,6 +26,11 @@ type computer struct {
 type coord struct {
 	x int
 	y int
+}
+
+type search struct {
+	c coord
+	d int
 }
 
 func newComputer(input []int) computer {
@@ -193,7 +198,7 @@ func splitString(input string) []int {
 	return values
 }
 
-func getMove(cpu *computer, r, i int)int {
+func getMove(cpu *computer, r, i int) int {
 	var command int
 
 	if r == 0 && i == 1 {
@@ -241,11 +246,11 @@ func getOutputString(system map[coord]rune) string {
 	var sb strings.Builder
 	for y := minY; y <= maxY; y++ {
 		for x := minX; x <= maxX; x++ {
-			c,i := system[coord{x,y}]
-			if x == 0 && y == 0  {
+			c, i := system[coord{x, y}]
+			if x == 0 && y == 0 {
 				c = 'o'
 			}
-			if i{
+			if i {
 				sb.WriteRune(c)
 			} else {
 				sb.WriteRune(' ')
@@ -257,12 +262,13 @@ func getOutputString(system map[coord]rune) string {
 	return sb.String()
 }
 
-func buildMap(input string) map[coord]rune {
-	location := coord{0,0}
-	origin   := coord{0,0}
+func buildMap(input string) (map[coord]rune, coord) {
+	location := coord{0, 0}
+	origin := coord{0, 0}
 	right := complex(0, 1)
-	left  := complex(0,-1)
-	direction :=  complex(0,1)
+	left := complex(0, -1)
+	target := coord{0, 0}
+	direction := complex(0, 1)
 	count := 0
 	system := make(map[coord]rune)
 	system[location] = '.'
@@ -285,20 +291,76 @@ func buildMap(input string) map[coord]rune {
 			system[next] = 'x'
 			direction *= left
 			location = next
+			target = next
 		}
 	}
 
-	return system
+	return system, target
+}
+
+func getNeighbours(maze map[coord]rune, current coord) []coord {
+	n := make([]coord, 0)
+	list := [4]coord{coord{current.x + 1, current.y}, coord{current.x - 1, current.y}, coord{current.x, current.y + 1}, coord{current.x, current.y - 1}}
+	for _, c := range list {
+		if maze[c] == '.' || maze[c] == 'x' {
+			n = append(n, c)
+		}
+	}
+	return n
+}
+
+func getDistance(maze map[coord]rune, target rune) int {
+	queue := make([]search, 0)
+	queue = append(queue, search{coord{0, 0}, 0})
+	visited := make(map[coord]bool, 0)
+
+	for len(queue) > 0 {
+		current := queue[0]
+		queue = queue[1:]
+		visited[current.c] = true
+		for _, c := range getNeighbours(maze, current.c) {
+			if maze[c] == 'x' {
+				return current.d + 1
+			} else if !visited[c] {
+				queue = append(queue, search{c, current.d + 1})
+			}
+		}
+	}
+
+	return -1
+}
+
+func getTime(maze map[coord]rune, oxygen coord) int {
+	queue := make([]search, 0)
+	queue = append(queue, search{oxygen, 0})
+	last := 0
+	visited := make(map[coord]bool, 0)
+
+	for len(queue) > 0 {
+		current := queue[0]
+		queue = queue[1:]
+		visited[current.c] = true
+		last = current.d
+		for _, c := range getNeighbours(maze, current.c) {
+			if !visited[c] {
+				queue = append(queue, search{c, current.d + 1})
+			}
+		}
+	}
+
+	return last
 }
 
 func partA(input string) string {
-	fmt.Println(getOutputString(buildMap(input)))
-
-	return "A"
+	maze, _ := buildMap(input)
+	distance := getDistance(maze, 'x')
+	return strconv.Itoa(distance)
 }
 
 func partB(input string) string {
-	return "B"
+	maze, oxygen := buildMap(input)
+	time := getTime(maze, oxygen)
+	return strconv.Itoa(time)
 }
 
 func main() {
