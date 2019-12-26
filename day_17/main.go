@@ -122,7 +122,6 @@ func opInput(cpu *computer, operands []int, addressMode []int) {
 
 func opOutput(cpu *computer, operands []int, addressMode []int) {
 	value := cpu.read(operands[0], addressMode[0], false)
-	fmt.Printf("%c", value)
 	cpu.outputBuffer = append(cpu.outputBuffer, value)
 }
 
@@ -195,7 +194,7 @@ func splitString(input string) []int {
 	return values
 }
 
-func isCross(s map[coord]int, c coord) bool{
+func isCross(s map[coord]int, c coord) bool {
 	return s[c] == '#' &&
 		s[coord{c.x + 1, c.y}] == '#' &&
 		s[coord{c.x - 1, c.y}] == '#' &&
@@ -215,7 +214,7 @@ func partA(input string) string {
 				y++
 				x = 0
 			} else {
-				scaffolding[coord{x,y}] = cpu.outputBuffer[0]
+				scaffolding[coord{x, y}] = cpu.outputBuffer[0]
 				x++
 			}
 			cpu.outputBuffer = cpu.outputBuffer[1:]
@@ -233,21 +232,19 @@ func partA(input string) string {
 }
 
 func partB(input string) string {
-/*
-	Full path and movement functions found by hand
-	L12,L8,L8,L12,R4,L12,R6,L12,L8,L8,R4,L12,L12,R6,L12,R4,L12,R6,L12,L8,L8,R4,L12,L12,R6,L12,L8,L8,R4,L12,L12,R6,L12,R4,L12,R6
-*/
-//	Main = B,C,B,A,C,B,A,B,A,C
-	M := []int{66,44,67,44,66,44,65,44,67,44,66,44,65,44,66,44,65,44,67,10}
+	//	Full path and movement functions found by hand
+	//	L12,L8,L8,L12,R4,L12,R6,L12,L8,L8,R4,L12,L12,R6,L12,R4,L12,R6,L12,L8,L8,R4,L12,L12,R6,L12,L8,L8,R4,L12,L12,R6,L12,R4,L12,R6
+	//	Main = A,C,A,B,C,A,B,A,B,C
+	M := []int{65, 44, 67, 44, 65, 44, 66, 44, 67, 44, 65, 44, 66, 44, 65, 44, 66, 44, 67, 10}
 
-//	A = R4,L12,L12,R6
-	A := []int{76,44,52,44,82,44,49,50,44,82,44,49,50,44,76,44,54,10}
+	//	A = L12,L8,L8
+	A := []int{76, 44, 49, 50, 44, 76, 44, 56, 44, 76, 44, 56, 10}
 
-//	B = L12,L8,L8
-	B := []int{82,49,50,44,82,56,44,82,56,10}
+	//	B = R4,L12,L12,R6
+	B := []int{82, 44, 52, 44, 76, 44, 49, 50, 44, 76, 44, 49, 50, 44, 82, 44, 54, 10}
 
-//	C = L12,R4,L12,R6
-	C := []int{82,49,50,44,76,52,44,82,49,50,44,76,54,10}
+	//	C = L12,R4,L12,R6
+	C := []int{76, 44, 49, 50, 44, 82, 44, 52, 44, 76, 44, 49, 50, 44, 82, 44, 54, 10}
 
 	cpu := newComputer(splitString(getLines(input)[0]))
 	cpu.memory[0] = 2
@@ -256,7 +253,7 @@ func partB(input string) string {
 	cpu.inputQueue = append(cpu.inputQueue, A...)
 	cpu.inputQueue = append(cpu.inputQueue, B...)
 	cpu.inputQueue = append(cpu.inputQueue, C...)
-	cpu.inputQueue = append(cpu.inputQueue, []int{121,10}...)
+	cpu.inputQueue = append(cpu.inputQueue, []int{110, 10}...)
 
 	for cpu.running {
 		cpu.clock()
