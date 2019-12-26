@@ -241,7 +241,15 @@ func getOutputString(system map[coord]rune) string {
 	var sb strings.Builder
 	for y := minY; y <= maxY; y++ {
 		for x := minX; x <= maxX; x++ {
-			sb.WriteRune(system[coord{x,y}])
+			c,i := system[coord{x,y}]
+			if x == 0 && y == 0  {
+				c = 'o'
+			}
+			if i{
+				sb.WriteRune(c)
+			} else {
+				sb.WriteRune(' ')
+			}
 		}
 		sb.WriteString("\n")
 	}
@@ -251,33 +259,30 @@ func getOutputString(system map[coord]rune) string {
 
 func buildMap(input string) map[coord]rune {
 	location := coord{0,0}
+	origin   := coord{0,0}
 	right := complex(0, 1)
 	left  := complex(0,-1)
 	direction :=  complex(0,1)
+	count := 0
 	system := make(map[coord]rune)
 	system[location] = '.'
 	cpu := newComputer(splitString(getLines(input)[0]))
-/*
-	for i:= 0; i < 10; i++ {
-		res := getMove(&cpu, int(real(direction)), int(imag(direction)))
-		if res == 0 {
-			system[coord] = '#'
-		} else if res == 1 {
-			location.x += int(real(direction))
-			location.y += int(imag(direction))
-			system[location] = '.'
-		}
-	}
-*/
 
-	for i:= 0; i < 1000; i++ {
-		next := coord{location.x - int(real(direction)), location.y - int(imag(direction))}
+	for count < 4 {
+		next := coord{location.x + int(real(direction)), location.y + int(imag(direction))}
+		if next == origin {
+			count++
+		}
 		res := getMove(&cpu, int(real(direction)), int(imag(direction)))
 		if res == 0 {
 			system[next] = '#'
 			direction *= right
 		} else if res == 1 {
 			system[next] = '.'
+			direction *= left
+			location = next
+		} else if res == 2 {
+			system[next] = 'x'
 			direction *= left
 			location = next
 		}
